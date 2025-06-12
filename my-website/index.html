@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RiriMovieFlix - Watch Movies & TV Shows Online</title>
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="preload" href="css/home.css" as="style">
+  <link rel="preload" href="js/home.js" as="script">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <script defer src="js/home.js"></script>
+</head>
+
+<body>
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-panel">
+      <div class="search-panel-header">
+        <input type="text" id="search-panel-input" class="search-bar" placeholder="Search for movies, TV shows, anime..." />
+        <button class="close-search" id="close-search-btn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="search-panel-results" id="search-panel-results"></div>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <span class="logo-text">RiriMovieFlix</span>
+      <div class="nav-links">
+        <a href="#" class="active" data-category="movies">Movies</a>
+        <a href="#" data-category="tvshows">TV Shows</a>
+        <a href="#" data-category="anime">Anime</a>
+        <a href="#" data-category="mylist">My List</a>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-bar" id="navbar-search" placeholder="Search..." />
+      </div>
+      <div class="user-menu">
+        <i class="fas fa-bell"></i>
+      </div>
+    </div>
+  </nav>
+
+  <div class="slideshow">
+    <div class="slide active" style="background-image: url('')">
+      <div class="slide-content">
+        <h1 id="banner-title"></h1>
+        <div class="hero-buttons">
+          <button class="play-btn"><i class="fas fa-play"></i> Play</button>
+          <button class="more-info-btn"><i class="fas fa-info-circle"></i> More Info</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="content-section active" id="movies-section">
+      <div class="row">
+        <h2>Trending Now</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="movies-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="movies-title-list"></div>
+      </div>
+      <div class="row">
+        <h2>Popular Movies</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="popular-movies-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="popular-movies-title-list"></div>
+      </div>
+    </div>
+
+    <div class="content-section" id="tvshows-section">
+      <div class="row">
+        <h2>Popular TV Shows</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="tvshows-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="tvshows-title-list"></div>
+      </div>
+      <div class="row">
+        <h2>Top Rated TV Shows</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="top-tvshows-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="top-tvshows-title-list"></div>
+      </div>
+    </div>
+
+    <div class="content-section" id="anime-section">
+      <div class="row">
+        <h2>Top Anime</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="anime-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="anime-title-list"></div>
+      </div>
+      <div class="row">
+        <h2>Popular Anime</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="popular-anime-list"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="movie-title-list" id="popular-anime-title-list"></div>
+      </div>
+    </div>
+
+    <div class="content-section" id="mylist-section">
+      <div class="row">
+        <h2>My List</h2>
+        <div class="movie-row">
+          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
+          <div class="list" id="mylist-content"></div>
+          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()"><i class="fas fa-times"></i></span>
+      <div class="modal-body">
+        <img id="modal-image" src="" alt="" />
+        <div class="modal-text">
+          <h2 id="modal-title"></h2>
+          <div class="meta-info">
+            <span id="modal-year"></span>
+            <span id="modal-duration"></span>
+            <span id="modal-rating"></span>
+          </div>
+          <div class="stars" id="modal-rating"></div>
+          <p id="modal-description"></p>
+          <div class="modal-buttons">
+            <button class="play-btn" onclick="autoPlayVideo(currentItem)"><i class="fas fa-play"></i> Play</button>
+            <button class="add-list-btn"><i class="fas fa-plus"></i> Add to List</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <iframe id="modal-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="logo.png" alt="RiriMovieFlix" />
+      </div>
+      <div class="footer-links">
+        <div class="footer-column">
+          <h3>Company</h3>
+          <a href="#">About Us</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact Us</a>
+        </div>
+        <div class="footer-column">
+          <h3>Legal</h3>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Cookie Preferences</a>
+        </div>
+        <div class="footer-column">
+          <h3>Help</h3>
+          <a href="#">FAQ</a>
+          <a href="#">Account</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 RiriMovieFlix. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
