@@ -28,36 +28,24 @@
 </head>
 
 <body>
-  <div class="search-overlay" id="search-overlay">
-    <div class="search-panel">
-      <div class="search-panel-header">
-        <input type="text" id="search-panel-input" class="search-bar" placeholder="Search for movies, TV shows, anime..." />
-        <button class="close-search" id="close-search-btn"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="search-panel-results" id="search-panel-results"></div>
-    </div>
-  </div>
-
   <nav class="navbar">
-    <div class="navbar-left">
-      <span class="logo-text">RiriMovieFlix</span>
-      <div class="nav-links">
-        <a href="#" class="active" data-category="movies">Movies</a>
-        <a href="#" data-category="tvshows">TV Shows</a>
-        <a href="#" data-category="anime">Anime</a>
-        <a href="#" data-category="mylist">My List</a>
-      </div>
+    <div class="navbar-left minimalist">
+      <span class="logo-text">Ninimovieflix</span>
     </div>
-    <div class="navbar-right">
-      <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" class="search-bar" id="navbar-search" placeholder="Search..." />
+    <div class="navbar-right minimalist">
+      <div class="nav-links">
+        <a href="#" class="active" data-category="movies"><span class="nav-label">Movies</span></a>
+        <a href="#" data-category="tvshows"><span class="nav-label">TV Shows</span></a>
+        <a href="#" data-category="anime"><span class="nav-label">Anime</span></a>
+        <a href="#" data-category="mylist"><span class="nav-label">My List</span></a>
       </div>
-      <div class="user-menu">
-        <i class="fas fa-bell"></i>
+      <div class="search-container advanced-search">
+        <i class="fas fa-search search-icon-inside"></i>
+        <input type="text" class="search-bar advanced" id="navbar-search" placeholder="Search..." />
       </div>
     </div>
   </nav>
+  <div id="search-results-main"></div>
 
   <div class="slideshow">
     <div class="slide active" style="background-image: url('')">
@@ -150,8 +138,12 @@
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()"><i class="fas fa-times"></i></span>
-      <div class="modal-body">
-        <img id="modal-image" src="" alt="" />
+      <div class="modal-body" id="modal-body">
+        <!-- Video will be on the left, details on the right -->
+        <div class="modal-video-container">
+          <iframe id="modal-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+          <div class="server-select" id="server-select"></div>
+        </div>
         <div class="modal-text">
           <h2 id="modal-title"></h2>
           <div class="meta-info">
@@ -168,38 +160,6 @@
         </div>
       </div>
     </div>
-    <iframe id="modal-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
   </div>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-logo">
-        <img src="logo.png" alt="RiriMovieFlix" />
-      </div>
-      <div class="footer-links">
-        <div class="footer-column">
-          <h3>Company</h3>
-          <a href="#">About Us</a>
-          <a href="#">Careers</a>
-          <a href="#">Contact Us</a>
-        </div>
-        <div class="footer-column">
-          <h3>Legal</h3>
-          <a href="#">Terms of Service</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Cookie Preferences</a>
-        </div>
-        <div class="footer-column">
-          <h3>Help</h3>
-          <a href="#">FAQ</a>
-          <a href="#">Account</a>
-          <a href="#">Support</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 RiriMovieFlix. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>
