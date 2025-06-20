@@ -1,4 +1,4 @@
-const API_KEY = '0e20504d15b1fc90c9dac4847f2521d3';
+const API_KEY = 'a1e72fd93ed59f56e6332813b9f8dcae';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/original';
 let currentItem;
@@ -8,8 +8,77 @@ let myList = JSON.parse(localStorage.getItem('myList')) || [];
 let scrollPosition = 0;
 let lastActiveSection = 'movies';
 
-// Auto-play functionality with automatic server selection
-async function autoPlayVideo(item) {
+// Helper to get genre names from TMDB genre IDs
+const GENRE_MAP = {
+  28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary',
+  18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+  9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller',
+  10752: 'War', 37: 'Western', 10759: 'Action & Adventure', 10762: 'Kids', 10763: 'News',
+  10764: 'Reality', 10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk', 10768: 'War & Politics', 10769: 'Foreign'
+};
+
+// Helper to get country name (fallback to code)
+function getCountry(item) {
+  if (item.origin_country && item.origin_country.length) return item.origin_country[0];
+  if (item.production_countries && item.production_countries.length) return item.production_countries[0].iso_3166_1;
+  return '';
+}
+
+// Helper to get genre names
+function getGenres(item) {
+  if (item.genre_ids && Array.isArray(item.genre_ids)) {
+    return item.genre_ids.map(id => GENRE_MAP[id] || '').filter(Boolean).join(', ');
+  }
+  if (item.genres && Array.isArray(item.genres)) {
+    return item.genres.map(g => g.name).join(', ');
+  }
+  return '';
+}
+
+// Toggle description expand/collapse
+function toggleDescription() {
+  const desc = document.getElementById('modal-description');
+  const arrow = document.getElementById('desc-toggle-arrow');
+  if (!desc) return;
+  if (desc.style.maxHeight === 'none') {
+    desc.style.maxHeight = '120px';
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    desc.style.maxHeight = 'none';
+    arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+// Populate 'You May Also Like' with placeholder recommendations
+function populateRecommendations() {
+  const recommendList = document.getElementById('recommend-list');
+  if (!recommendList) return;
+  recommendList.innerHTML = '';
+  // Placeholder: show 4 random movie posters from trending
+  if (window._trendingMovies && window._trendingMovies.length) {
+    window._trendingMovies.slice(0, 4).forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'recommend-item';
+      div.innerHTML = `<img src="${IMG_URL}${item.poster_path}" alt="${item.title || item.name}" style="width:90px;height:135px;border-radius:6px;cursor:pointer;" />`;
+      div.onclick = () => autoPlayVideo(item);
+      recommendList.appendChild(div);
+    });
+  }
+}
+
+// Server selector logic
+let currentServer = 'sherry';
+function setServer(server) {
+  currentServer = server;
+  document.querySelectorAll('.server-selector button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.server === server);
+  });
+  // Re-play video with new server
+  if (currentItem) autoPlayVideo(currentItem, true);
+}
+
+// Auto-play functionality with Netflix-style modal
+async function autoPlayVideo(item, keepServer) {
   try {
     currentItem = item;
     const type = item.media_type === "movie" ? "movie" : "tv";
@@ -18,55 +87,55 @@ async function autoPlayVideo(item) {
     const modalTitle = document.getElementById('modal-title');
     const modalImage = document.getElementById('modal-image');
     const modalDescription = document.getElementById('modal-description');
-    const modalRating = document.getElementById('modal-rating');
     const modalYear = document.getElementById('modal-year');
-    const modalDuration = document.getElementById('modal-duration');
-
-    // Update modal content
+    const modalGenre = document.getElementById('modal-genre');
+    const modalRating = document.getElementById('modal-rating');
+    const modalVotes = document.getElementById('modal-votes');
+    // Details
     modalTitle.textContent = item.title || item.name;
-    modalDescription.textContent = item.overview;
-    modalImage.src = `${IMG_URL}${item.poster_path}`;
-    modalRating.innerHTML = '★'.repeat(Math.round(item.vote_average / 2)) + '☆'.repeat(5 - Math.round(item.vote_average / 2));
-    modalYear.textContent = item.release_date ? item.release_date.split('-')[0] : '';
-    modalDuration.textContent = item.runtime ? `${Math.floor(item.runtime / 60)}h ${item.runtime % 60}m` : '';
-
-    // Show modal and loading indicator
+    modalYear.textContent = item.release_date ? new Date(item.release_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+    modalGenre.textContent = getGenres(item);
+    modalRating.textContent = item.vote_average ? `★ ${item.vote_average.toFixed(1)}` : '';
+    modalVotes.textContent = item.vote_count ? `(${item.vote_count})` : '';
+    // Description
+    modalDescription.textContent = item.overview || '';
+    modalDescription.style.maxHeight = '120px';
+    document.getElementById('desc-toggle-arrow').style.transform = 'rotate(0deg)';
+    // Video or poster
+    document.querySelector('.modal-video-wrapper').style.display = 'block';
+    modalVideo.style.display = 'block';
+    modalImage.style.display = 'none';
+    // Server selector
+    let serverRow = document.querySelector('.server-selector');
+    if (!serverRow) {
+      serverRow = document.createElement('div');
+      serverRow.className = 'server-selector';
+      serverRow.innerHTML = `<label>Select Server:</label>
+        <button data-server="sherry" class="active">SHERRY</button>
+        <button data-server="chianti">CHIANTI</button>`;
+      document.querySelector('.modal-details').insertBefore(serverRow, document.querySelector('.modal-description-section'));
+      serverRow.querySelectorAll('button').forEach(btn => {
+        btn.onclick = () => setServer(btn.dataset.server);
+      });
+    }
+    // Set active server
+    serverRow.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.server === currentServer);
+    });
+    // Show modal
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    
-    const loadingIndicator = document.createElement('div');
-    loadingIndicator.className = 'loading-indicator';
-    loadingIndicator.innerHTML = '<div class="spinner"></div>';
-    modal.appendChild(loadingIndicator);
-
-    // Try different video sources
-    const servers = [
-      `https://vidsrc.cc/v2/embed/${type}/${item.id}`,
-      `https://vidsrc.net/embed/${type}/?tmdb=${item.id}`,
-      `https://player.videasy.net/${type}/${item.id}`
-    ];
-
-    let currentServerIndex = 0;
-    
-    function tryNextServer() {
-      if (currentServerIndex >= servers.length) {
-        loadingIndicator.innerHTML = '<div class="error-message">Unable to load video. Please try again later.</div>';
-        return;
-      }
-
-      modalVideo.src = servers[currentServerIndex];
-      currentServerIndex++;
-
-      modalVideo.onerror = () => {
-        tryNextServer();
-      };
-
-      modalVideo.onload = () => {
-        loadingIndicator.remove();
-      };
+    // Play video
+    const servers = {
+      sherry: `https://vidsrc.cc/v2/embed/${type}/${item.id}`,
+      chianti: `https://vidsrc.net/embed/${type}/?tmdb=${item.id}`
+    };
+    modalVideo.src = servers[currentServer] || servers.sherry;
+    // Recommendations
+    if (!window._trendingMovies) {
+      window._trendingMovies = await fetchTrending('movie');
     }
-
-    tryNextServer();
+    populateRecommendations();
   } catch (error) {
     console.error('Error in autoPlayVideo:', error);
   }
