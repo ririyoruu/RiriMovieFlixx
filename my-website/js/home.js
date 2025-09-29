@@ -55,6 +55,9 @@ async function initializeApp() {
     await loadLiveChannels();
     loadMyList();
     
+    // Setup hero with original content
+    setupOriginalHero();
+    
     // Setup event listeners
     setupEventListeners();
     
@@ -77,11 +80,17 @@ function setupEventListeners() {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const category = link.dataset.category;
-      showCategory(category);
       
       // Update active state
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
       link.classList.add('active');
+      
+      // If home is clicked, refresh content
+      if (category === 'home') {
+        refreshHomeContent();
+      } else {
+        showCategory(category);
+      }
     });
   });
   
@@ -227,6 +236,51 @@ function loadLiveChannels() {
 
 function loadMyList() {
   displayMovies(myList, 'my-list');
+}
+
+// Setup Original Hero Section
+function setupOriginalHero() {
+  const heroTitle = document.getElementById('hero-title');
+  const heroDescription = document.getElementById('hero-description');
+  
+  heroTitle.textContent = 'Welcome to RiriMovieFlix';
+  heroDescription.textContent = 'Para walay ads, use brave browser peeps. I love you, darling';
+}
+
+// Go to Home function
+function goToHome() {
+  showCategory('home');
+  
+  // Update active nav link
+  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+  document.querySelector('[data-category="home"]').classList.add('active');
+  
+  // Refresh the content
+  refreshHomeContent();
+}
+
+// Refresh home content function
+async function refreshHomeContent() {
+  showLoading(true);
+  
+  try {
+    // Reload all content
+    await loadTrendingMovies();
+    await loadPopularMovies();
+    await loadTVShows();
+    await loadLiveChannels();
+    loadMyList();
+    
+    // Reset hero section
+    setupOriginalHero();
+    
+    showNotification('Content refreshed!');
+  } catch (error) {
+    console.error('Error refreshing content:', error);
+    showNotification('Error refreshing content. Please try again.', 'error');
+  } finally {
+    showLoading(false);
+  }
 }
 
 // Display Functions
@@ -423,6 +477,7 @@ function downloadMovie() {
   if (!currentMovie) return;
   showNotification(`Download started: ${currentMovie.title || currentMovie.name}`);
 }
+
 
 function playRandomContent() {
   // Get random movie from trending
