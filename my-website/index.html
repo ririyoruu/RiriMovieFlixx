@@ -1,165 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RiriMovieFlix - Watch Movies & TV Shows Online</title>
   <link rel="stylesheet" href="css/home.css">
   <link rel="preload" href="css/home.css" as="style">
   <link rel="preload" href="js/home.js" as="script">
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-  <script defer src="js/home.js">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ad Blocker Script -->
+  <script>
+    // Block ad scripts and popups
+    (function() {
+      // Block Google AdSense
+      if (window.adsbygoogle) {
+        window.adsbygoogle = undefined;
+      }
+      
+      // Block popunders and ad networks
+      const originalOpen = window.open;
+      window.open = function(url, name, specs) {
+        if (url && (url.includes('popunder') || url.includes('ad') || url.includes('ads'))) {
+          return null;
+        }
+        return originalOpen.call(this, url, name, specs);
+      };
+      
+      // Block ad-related scripts
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.tagName === 'SCRIPT') {
+                if (node.src && (node.src.includes('googlesyndication') || 
+                    node.src.includes('adsbygoogle') || 
+                    node.src.includes('popunder') ||
+                    node.src.includes('ad'))) {
+                  node.remove();
+                }
+              }
+            });
+          }
+        });
+      });
+      
+      observer.observe(document.body, { childList: true, subtree: true });
+    })();
   </script>
-
-   <script type="text/javascript" data-cfasync="false">
-/*<![CDATA[/* */
-(function(){var f=window,e="c450968b1e181515d8107b1a25ea0444",v=[["siteId",832+368*458+5039238],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],t=["d3d3LmludGVsbGlnZW5jZWFkeC5jb20vcmpzZngubWluLmNzcw==","ZDJrbHg4N2Jnem5nY2UuY2xvdWRmcm9udC5uZXQvSExoSkFnL25jbGVhdmUubWluLmpz"],q=-1,j,p,n=function(){clearTimeout(p);q++;if(t[q]&&!(1775774798000<(new Date).getTime()&&1<q)){j=f.document.createElement("script");j.type="text/javascript";j.async=!0;var s=f.document.getElementsByTagName("script")[0];j.src="https://"+atob(t[q]);j.crossOrigin="anonymous";j.onerror=n;j.onload=function(){clearTimeout(p);f[e.slice(0,16)+e.slice(0,16)]||n()};p=setTimeout(n,5E3);s.parentNode.insertBefore(j,s)}};if(!f[e]){try{Object.freeze(f[e]=v)}catch(e){}n()}})();
-/*]]>/* */
-</script>
-
   
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8705832376469788"
-     crossorigin="anonymous"></script> 
-
- 
-  
+  <script defer src="js/home.js"></script>
 </head>
 
 <body>
+  <!-- Navigation Bar -->
   <nav class="navbar">
-    <div class="navbar-left minimalist">
-      <span class="logo-text">Ninimovieflix</span>
-    </div>
-    <div class="navbar-right minimalist">
-      <div class="nav-links">
-        <a href="#" class="active" data-category="movies"><span class="nav-label">Movies</span></a>
-        <a href="#" data-category="tvshows"><span class="nav-label">TV Shows</span></a>
-        <a href="#" data-category="anime"><span class="nav-label">Anime</span></a>
-        <a href="#" data-category="mylist"><span class="nav-label">My List</span></a>
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <div class="logo">
+          <span class="logo-text">RiriMovieFlix</span>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="nav-link active" data-category="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a href="#" class="nav-link" data-category="movies">
+            <i class="fas fa-film"></i>
+            <span>Movies</span>
+          </a>
+          <a href="#" class="nav-link" data-category="tv">
+            <i class="fas fa-tv"></i>
+            <span>TV Shows</span>
+          </a>
+          <a href="#" class="nav-link" data-category="live">
+            <i class="fas fa-broadcast-tower"></i>
+            <span>Live TV</span>
+          </a>
+          <a href="#" class="nav-link" data-category="mylist">
+            <i class="fas fa-bookmark"></i>
+            <span>My List</span>
+          </a>
+        </div>
       </div>
-      <div class="search-container advanced-search">
-        <i class="fas fa-search search-icon-inside"></i>
-        <input type="text" class="search-bar advanced" id="navbar-search" placeholder="Search..." />
+      <div class="navbar-right">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" id="search-input" placeholder="Search movies, TV shows...">
+          <div class="search-results" id="search-results"></div>
+        </div>
+        <div class="user-menu">
+          <button class="user-btn">
+            <i class="fas fa-user"></i>
+          </button>
+        </div>
       </div>
     </div>
   </nav>
-  <div id="search-results-main"></div>
 
-  <div class="slideshow">
-    <div class="slide active" style="background-image: url('')">
-      <div class="slide-content">
-        <h1 id="banner-title"></h1>
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title" id="hero-title">Welcome to RiriMovieFlix</h1>
+        <p class="hero-description" id="hero-description">Para walay ads, use brave browser peeps.</p>
         <div class="hero-buttons">
-          <button class="play-btn"><i class="fas fa-play"></i> Play</button>
-          <button class="more-info-btn"><i class="fas fa-info-circle"></i> More Info</button>
+          <button class="btn btn-primary" id="play-btn">
+            <i class="fas fa-play"></i>
+            Play Now
+          </button>
+          <button class="btn btn-secondary" id="info-btn">
+            <i class="fas fa-info-circle"></i>
+            More Info
+          </button>
         </div>
       </div>
-    </div>
-  </div>
+      <div class="hero-backdrop" id="hero-backdrop"></div>
+    </section>
 
-  <div class="content-wrapper">
-    <div class="content-section active" id="movies-section">
-      <div class="row">
-        <h2>Trending Now</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="movies-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="movies-title-list"></div>
+    <!-- Content Sections -->
+    <section class="content-sections">
+      <!-- Trending Now -->
+      <div class="content-section" id="trending-section">
+        <h2 class="section-title">Trending Now</h2>
+        <div class="movie-grid" id="trending-movies"></div>
       </div>
-      <div class="row">
-        <h2>Popular Movies</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="popular-movies-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="popular-movies-title-list"></div>
-      </div>
-    </div>
 
-    <div class="content-section" id="tvshows-section">
-      <div class="row">
-        <h2>Popular TV Shows</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="tvshows-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="tvshows-title-list"></div>
+      <!-- Popular Movies -->
+      <div class="content-section" id="movies-section">
+        <h2 class="section-title">Popular Movies</h2>
+        <div class="movie-grid" id="popular-movies"></div>
       </div>
-      <div class="row">
-        <h2>Top Rated TV Shows</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="top-tvshows-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="top-tvshows-title-list"></div>
-      </div>
-    </div>
 
-    <div class="content-section" id="anime-section">
-      <div class="row">
-        <h2>Top Anime</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="anime-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="anime-title-list"></div>
+      <!-- TV Shows -->
+      <div class="content-section" id="tv-section">
+        <h2 class="section-title">TV Shows</h2>
+        <div class="movie-grid" id="tv-shows"></div>
       </div>
-      <div class="row">
-        <h2>Popular Anime</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="popular-anime-list"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="movie-title-list" id="popular-anime-title-list"></div>
-      </div>
-    </div>
 
-    <div class="content-section" id="mylist-section">
-      <div class="row">
-        <h2>My List</h2>
-        <div class="movie-row">
-          <button class="scroll-btn left"><i class="fas fa-chevron-left"></i></button>
-          <div class="list" id="mylist-content"></div>
-          <button class="scroll-btn right"><i class="fas fa-chevron-right"></i></button>
-        </div>
+      <!-- Live TV -->
+      <div class="content-section" id="live-section">
+        <h2 class="section-title">Live TV</h2>
+        <div class="movie-grid" id="live-channels"></div>
       </div>
-    </div>
-  </div>
 
-  <div class="modal" id="modal">
+      <!-- My List -->
+      <div class="content-section" id="mylist-section">
+        <h2 class="section-title">My List</h2>
+        <div class="movie-grid" id="my-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Movie Detail Modal -->
+  <div class="modal" id="movie-modal">
+    <div class="modal-overlay" id="modal-overlay"></div>
     <div class="modal-content">
-      <span class="close" onclick="closeModal()"><i class="fas fa-times"></i></span>
-      <div class="modal-body" id="modal-body">
-        <!-- Video will be on the left, details on the right -->
-        <div class="modal-video-container">
-          <iframe id="modal-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
-          <div class="server-select" id="server-select"></div>
-        </div>
-        <div class="modal-text">
-          <h2 id="modal-title"></h2>
-          <div class="meta-info">
-            <span id="modal-year"></span>
-            <span id="modal-duration"></span>
-            <span id="modal-rating"></span>
+      <button class="modal-close" id="modal-close">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="modal-body">
+        <div class="modal-poster">
+          <img id="modal-poster" src="" alt="">
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="modal-play">
+              <i class="fas fa-play"></i>
+              Play
+            </button>
+            <button class="btn btn-secondary" id="modal-add">
+              <i class="fas fa-plus"></i>
+              Add to List
+            </button>
+            <button class="btn btn-secondary" id="modal-download">
+              <i class="fas fa-download"></i>
+              Download
+            </button>
           </div>
-          <div class="stars" id="modal-rating"></div>
-          <p id="modal-description"></p>
-          <div class="modal-buttons">
-            <button class="play-btn" onclick="autoPlayVideo(currentItem)"><i class="fas fa-play"></i> Play</button>
-            <button class="add-list-btn"><i class="fas fa-plus"></i> Add to List</button>
+        </div>
+        
+        <div class="modal-info">
+          <h1 class="modal-title" id="modal-title"></h1>
+          <div class="modal-meta">
+            <span class="modal-year" id="modal-year"></span>
+            <span class="modal-rating" id="modal-rating"></span>
+            <span class="modal-genre" id="modal-genre"></span>
+          </div>
+          <p class="modal-description" id="modal-description"></p>
+          
+          <!-- Server Selection -->
+          <div class="server-selection">
+            <h3>Select Server</h3>
+            <div class="server-buttons">
+              <button class="server-btn active" data-server="vidsrc">VidSrc</button>
+              <button class="server-btn" data-server="vidsrcme">VidSrcMe</button>
+              <button class="server-btn" data-server="superembed">SuperEmbed</button>
+            </div>
+          </div>
+          
+          <!-- Seasons (for TV shows) -->
+          <div class="seasons-section" id="seasons-section" style="display: none;">
+            <h3>Seasons</h3>
+            <div class="seasons-list" id="seasons-list"></div>
+          </div>
+          
+          <!-- Episodes (for TV shows) -->
+          <div class="episodes-section" id="episodes-section" style="display: none;">
+            <h3>Episodes</h3>
+            <div class="episodes-list" id="episodes-list"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Video Player Modal -->
+  <div class="video-modal" id="video-modal">
+    <div class="video-overlay" id="video-overlay"></div>
+    <div class="video-container">
+      <button class="video-close" id="video-close">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="video-player">
+        <iframe id="video-iframe" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loading-spinner">
+    <div class="spinner"></div>
   </div>
 </body>
 </html>
